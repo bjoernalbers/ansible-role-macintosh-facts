@@ -1,6 +1,6 @@
-# macintosh_facts
+# Ansible Role: macintosh_facts
 
-Ansible Role to install custom facts on Macintosh Computers for reporting.
+An Ansible Role to install custom facts on Macintosh Computers for reporting.
 
 
 ## Requirements
