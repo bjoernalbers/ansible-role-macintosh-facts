@@ -1,2 +1,11 @@
 ---
-# tasks file for macintosh_facts
+- name: Create facts directory
+  file:
+    path: '{{ macintosh_facts_directory }}'
+    state: directory
+
+- name: Create facts file
+  template:
+    src: '{{ macintosh_facts_src }}'
+    dest: '{{ macintosh_facts_dest }}'
+    mode: '{{ macintosh_facts_mode }}'

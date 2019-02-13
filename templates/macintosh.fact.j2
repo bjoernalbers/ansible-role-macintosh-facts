@@ -1,0 +1,6 @@
+#!/bin/sh
+cat <<EOF
+{
+  "serial_number": "`system_profiler SPHardwareDataType | awk '/Serial/ {print $4}'`"
+}
+EOF
