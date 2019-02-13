@@ -1,22 +1,70 @@
 #!/usr/bin/env ruby -w
 
+require 'open3'
 require 'json'
 
 class HardwareData
-  def initialize(data)
-    @data = data
+  COMMAND = 'system_profiler'
+  ARGUMENTS = %w(SPHardwareDataType)
+
+  def initialize
+    @stdout, @status = Open3.capture2 COMMAND, *ARGUMENTS
+  end
+
+  def model_identifier
+    @model_identifier ||= find 'Model Identifier'
+  end
+
+  def model_name
+    @model_name ||= find 'Model Name'
+  end
+
+  def serial_number
+    @serial_number ||= find 'Serial Number'
   end
 
   def find(key)
-    $1 if @data[/^\s+#{key}.*:\s+(.+)$/]
+    $1 if @stdout[/^\s+#{key}.*:\s(.+)$/]
+  end
+
+  def available?
+    @status.success?
   end
 end
 
-hardware_data = HardwareData.new `system_profiler SPHardwareDataType`
+class ComputerInformation
+  COMMAND = '/usr/libexec/PlistBuddy'
+  ARGUMENTS = %w(-c Print /Library/Preferences/com.apple.RemoteDesktop.plist)
 
-facts = {}
-facts[:model_identifier] = hardware_data.find 'Model Identifier'
-facts[:model_name]       = hardware_data.find 'Model Name'
-facts[:serial_number]    = hardware_data.find 'Serial Number'
+  def initialize
+    @stdout, @status = Open3.capture2 COMMAND, *ARGUMENTS
+  end
+
+  def available?
+    @status.success?
+  end
+
+  def to_hash
+    (1..4).inject({}) { |h,i| h["info#{i}".to_sym] = find "Text#{i}"; h }
+  end
+
+  def find(key)
+    $1 if @stdout[/^\s+#{key}\s=\s(.+)$/]
+  end
+end
+
+facts                = {}
+hardware_data        = HardwareData.new
+computer_information = ComputerInformation.new
+
+if hardware_data.available?
+  facts[:model_identifier] = hardware_data.model_identifier
+  facts[:model_name]       = hardware_data.model_name
+  facts[:serial_number]    = hardware_data.serial_number
+end
+
+if computer_information.available?
+  facts[:computer_information] = computer_information.to_hash
+end
 
 puts JSON.pretty_generate(facts)
