@@ -3,7 +3,28 @@
 [![Build Status](https://travis-ci.org/bjoernalbers/ansible-role-macintosh-facts.svg?branch=master)](https://travis-ci.org/bjoernalbers/ansible-role-macintosh-facts)
 
 An Ansible Role to install custom facts on Macintosh Computers for reporting.
-Currently the serial number is returned.
+Here's a sample of these new facts:
+
+    $ ansible -m setup belladona -a filter=ansible_local
+    belladona | SUCCESS => {
+        "ansible_facts": {
+            "ansible_local": {
+                "macintosh": {
+                    "computer_information": {
+                        "info1": "Office 42",
+                        "info2": "Tim Cook",
+                        "info3": null,
+                        "info4": null
+                    },
+                    "marketing_name": "Mac mini (2018)",
+                    "model_identifier": "Macmini8,1",
+                    "model_name": "Mac mini",
+                    "serial_number": "C03ZN6AMJYW0"
+                }
+            }
+        },
+        "changed": false
+    }
 
 
 ## Requirements
