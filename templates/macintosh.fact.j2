@@ -9,7 +9,7 @@ class Info
   end
 
   def available?
-    @status.success?
+    @status.success? && @stdout && !@stdout.empty?
   end
 end
 
@@ -37,6 +37,28 @@ class HardwareData < Info
   end
 end
 
+class AppleWebService < Info
+  def initialize(serial_number)
+    @serial_number = serial_number
+    @stdout, @status = Open3.capture2(*command)
+  end
+
+  def command
+    %W[
+      curl --silent
+      https://support-sp.apple.com/sp/product?cc=#{query_param}
+    ]
+  end
+
+  def query_param
+    @serial_number[-4..-1]
+  end
+
+  def marketing_name
+    $1 if @stdout[%r{<configCode>(.+)</configCode>}]
+  end
+end
+
 class ComputerInformation < Info
   def command
     %w[
@@ -54,16 +76,23 @@ class ComputerInformation < Info
   end
 end
 
-facts                = {}
-hardware_data        = HardwareData.new
-computer_information = ComputerInformation.new
+facts = {}
 
+hardware_data = HardwareData.new
 if hardware_data.available?
   facts[:model_identifier] = hardware_data.model_identifier
   facts[:model_name]       = hardware_data.model_name
   facts[:serial_number]    = hardware_data.serial_number
 end
 
+if hardware_data.available? && hardware_data.serial_number
+  apple_web_service = AppleWebService.new(hardware_data.serial_number)
+  if apple_web_service.available?
+    facts[:marketing_name] = apple_web_service.marketing_name
+  end
+end
+
+computer_information = ComputerInformation.new
 if computer_information.available?
   facts[:computer_information] = computer_information.to_hash
 end
