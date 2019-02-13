@@ -3,12 +3,21 @@
 require 'open3'
 require 'json'
 
-class HardwareData
-  COMMAND = 'system_profiler'
-  ARGUMENTS = %w(SPHardwareDataType)
-
+class Info
   def initialize
-    @stdout, @status = Open3.capture2 COMMAND, *ARGUMENTS
+    @stdout, @status = Open3.capture2(*command)
+  end
+
+  def available?
+    @status.success?
+  end
+end
+
+class HardwareData < Info
+  def command
+    %w[
+      system_profiler SPHardwareDataType
+    ]
   end
 
   def model_identifier
@@ -26,22 +35,14 @@ class HardwareData
   def find(key)
     $1 if @stdout[/^\s+#{key}.*:\s(.+)$/]
   end
-
-  def available?
-    @status.success?
-  end
 end
 
-class ComputerInformation
-  COMMAND = '/usr/libexec/PlistBuddy'
-  ARGUMENTS = %w(-c Print /Library/Preferences/com.apple.RemoteDesktop.plist)
-
-  def initialize
-    @stdout, @status = Open3.capture2 COMMAND, *ARGUMENTS
-  end
-
-  def available?
-    @status.success?
+class ComputerInformation < Info
+  def command
+    %w[
+      /usr/libexec/PlistBuddy -c Print
+      /Library/Preferences/com.apple.RemoteDesktop.plist
+    ]
   end
 
   def to_hash
