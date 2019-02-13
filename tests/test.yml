@@ -8,4 +8,6 @@
     - debug:
         msg: '{{ item }}: {{ ansible_local.macintosh[item] }}'
       with_items:
+        - model_identifier
+        - model_name
         - serial_number

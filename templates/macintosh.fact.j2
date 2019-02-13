@@ -15,6 +15,8 @@ end
 hardware_data = HardwareData.new `system_profiler SPHardwareDataType`
 
 facts = {}
-facts[:serial_number] = hardware_data.find 'Serial Number'
+facts[:model_identifier] = hardware_data.find 'Model Identifier'
+facts[:model_name]       = hardware_data.find 'Model Name'
+facts[:serial_number]    = hardware_data.find 'Serial Number'
 
 puts JSON.pretty_generate(facts)
