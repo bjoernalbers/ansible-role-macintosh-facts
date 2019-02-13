@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: macintosh_facts
   author: Björn Albers
   description: Install custom facts on Macintosh computers for reporting
   license: MIT
