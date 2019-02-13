@@ -1,6 +1,4 @@
 ---
 macintosh_facts_directory: /etc/ansible/facts.d
 macintosh_facts_file: macintosh.fact
-macintosh_facts_src: macintosh.fact.j2
-macintosh_facts_dest: '{{ macintosh_facts_directory }}/{{ macintosh_facts_file }}'
 macintosh_facts_mode: a+x

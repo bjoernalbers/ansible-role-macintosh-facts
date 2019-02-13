@@ -4,15 +4,15 @@
     path: '{{ macintosh_facts_directory }}'
     state: directory
 
-- name: Create facts file
-  template:
-    src: '{{ macintosh_facts_src }}'
-    dest: '{{ macintosh_facts_dest }}'
+- name: Copy facts file
+  copy:
+    src: '{{ macintosh_facts_file }}'
+    dest: '{{ macintosh_facts_directory }}'
     mode: '{{ macintosh_facts_mode }}'
-  register: macintosh_facts_template
+  register: macintosh_facts
 
 - name: Reload facts when changed
   setup:
     # This only gathers the "min" subset which includes our custom facts:
     gather_subset: '!all'
-  when: macintosh_facts_template is changed
+  when: macintosh_facts is changed
