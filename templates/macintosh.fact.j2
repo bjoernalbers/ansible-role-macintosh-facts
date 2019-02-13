@@ -1,6 +1,20 @@
-#!/bin/sh
-cat <<EOF
-{
-  "serial_number": "`system_profiler SPHardwareDataType | awk '/Serial/ {print $4}'`"
-}
-EOF
+#!/usr/bin/env ruby -w
+
+require 'json'
+
+class HardwareData
+  def initialize(data)
+    @data = data
+  end
+
+  def find(key)
+    $1 if @data[/^\s+#{key}.*:\s+(.+)$/]
+  end
+end
+
+hardware_data = HardwareData.new `system_profiler SPHardwareDataType`
+
+facts = {}
+facts[:serial_number] = hardware_data.find 'Serial Number'
+
+puts JSON.pretty_generate(facts)
