@@ -5,4 +5,7 @@
   roles:
     - ansible-role-macintosh-facts
   tasks:
-    - debug: var=ansible_local.macintosh.serial_number
+    - debug:
+        msg: '{{ item }}: {{ ansible_local.macintosh[item] }}'
+      with_items:
+        - serial_number
