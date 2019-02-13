@@ -1,5 +1,7 @@
 # Ansible Role: macintosh_facts
 
+[![Build Status](https://travis-ci.org/bjoernalbers/ansible-role-macintosh-facts.svg?branch=master)](https://travis-ci.org/bjoernalbers/ansible-role-macintosh-facts)
+
 An Ansible Role to install custom facts on Macintosh Computers for reporting.
 Currently the serial number is returned.
 

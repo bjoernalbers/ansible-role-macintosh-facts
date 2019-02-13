@@ -1,5 +1,6 @@
 ---
 - hosts: localhost
-  remote_user: root
+  connection: local
+  become: yes
   roles:
-    - macintosh_facts
+    - ansible-role-macintosh-facts
