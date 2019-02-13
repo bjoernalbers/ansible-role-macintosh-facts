@@ -12,8 +12,6 @@ install:
 script:
   - ansible-playbook tests/test.yml --syntax-check
   - ansible-playbook tests/test.yml
-  - ansible -c local -m setup localhost -a filter=ansible_local > local_facts.txt
-  - grep serial_number local_facts.txt
   - ansible-playbook tests/test.yml | tee /tmp/output.txt; grep -q 'changed=0.*failed=0' /tmp/output.txt
 
 notifications:

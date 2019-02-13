@@ -4,3 +4,5 @@
   become: yes
   roles:
     - ansible-role-macintosh-facts
+  tasks:
+    - debug: var=ansible_local.macintosh.serial_number
